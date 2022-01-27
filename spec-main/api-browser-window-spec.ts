@@ -4791,5 +4791,61 @@ describe('BrowserWindow module', () => {
       w.setBounds(newBounds);
       expect(w.getBounds()).to.deep.equal(newBounds);
     });
+
+    // it('should not display a visible background', async () => {
+    //   const display = screen.getPrimaryDisplay();
+
+    //   const backgroundWindow = new BrowserWindow({
+    //     ...display.bounds,
+    //     frame: false,
+    //     backgroundColor: CHROMA_COLOR_HEX
+    //   });
+
+    //   await backgroundWindow.loadURL('about:blank');
+
+    //   const w = new BrowserWindow({
+    //     ...display.bounds,
+    //     show: true,
+    //     transparent: true,
+    //     frame: false
+    //   });
+
+    //   w.loadFile(path.join(__dirname, 'fixtures', 'apps', 'half-background-color', 'index.html'));
+    //   await emittedOnce(w, 'ready-to-show');
+
+    //   const leftHalfColor = await colorAtPoint({
+    //     x: display.size.width / 4,
+    //     y: display.size.height / 2
+    //   });
+
+    //   const rightHalfColor = await colorAtPoint({
+    //     x: display.size.width - (display.size.width / 4),
+    //     y: display.size.height / 2
+    //   });
+
+    //   expect(leftHalfColor).to.equal(CHROMA_COLOR_HEX);
+    //   expect(rightHalfColor).to.equal('#ff0000');
+    // });
+  });
+
+  describe('"backgroundColor" option', () => {
+    let appProcess: childProcess.ChildProcessWithoutNullStreams | undefined;
+
+    afterEach(() => {
+      if (appProcess && !appProcess.killed) {
+        appProcess.kill();
+        appProcess = undefined;
+      }
+      closeAllWindows();
+    });
+
+    it('should display the set color', async () => {
+      const appPath = path.join(__dirname, 'fixtures', 'apps', 'half-background-color');
+
+      appProcess = childProcess.spawn(process.execPath, [appPath]);
+
+      const [code] = await emittedOnce(appProcess, 'exit');
+      expect(code).to.equal(0);
+    });
   });
 });
