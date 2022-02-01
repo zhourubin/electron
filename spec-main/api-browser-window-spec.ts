@@ -4839,13 +4839,25 @@ describe('BrowserWindow module', () => {
       closeAllWindows();
     });
 
-    it('should display the set color', async () => {
+    it('should display the set color on BrowserWindow', async () => {
       const appPath = path.join(__dirname, 'fixtures', 'apps', 'half-background-color');
 
       appProcess = childProcess.spawn(process.execPath, [appPath]);
 
       const [code] = await emittedOnce(appProcess, 'exit');
       expect(code).to.equal(0);
+    });
+
+    it('should display the set color on BrowserView', async () => {
+      // test background colors in BrowserViews
+    });
+
+    it('should display the set color on child window', async () => {
+      //
+    });
+
+    it('should correctly apply transparency to child window', async () => {
+      //
     });
   });
 });
