@@ -149,10 +149,10 @@ void ElectronRenderFrameObserver::DraggableRegionsChanged() {
     regions.push_back(std::move(region));
   }
 
-  mojo::Remote<mojom::ElectronBrowser> browser_remote;
+  mojo::Remote<mojom::ElectronWebContentsUtility> web_contents_utility_remote;
   render_frame_->GetBrowserInterfaceBroker()->GetInterface(
-      browser_remote.BindNewPipeAndPassReceiver());
-  browser_remote->UpdateDraggableRegions(std::move(regions));
+      web_contents_utility_remote.BindNewPipeAndPassReceiver());
+  web_contents_utility_remote->UpdateDraggableRegions(std::move(regions));
 }
 
 void ElectronRenderFrameObserver::WillReleaseScriptContext(
@@ -169,10 +169,10 @@ void ElectronRenderFrameObserver::OnDestruct() {
 void ElectronRenderFrameObserver::DidMeaningfulLayout(
     blink::WebMeaningfulLayout layout_type) {
   if (layout_type == blink::WebMeaningfulLayout::kVisuallyNonEmpty) {
-    mojo::Remote<mojom::ElectronBrowser> browser_remote;
+    mojo::Remote<mojom::ElectronWebContentsUtility> web_contents_utility_remote;
     render_frame_->GetBrowserInterfaceBroker()->GetInterface(
-        browser_remote.BindNewPipeAndPassReceiver());
-    browser_remote->OnFirstNonEmptyLayout();
+        web_contents_utility_remote.BindNewPipeAndPassReceiver());
+    web_contents_utility_remote->OnFirstNonEmptyLayout();
   }
 }
 

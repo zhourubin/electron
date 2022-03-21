@@ -1,9 +1,9 @@
-// Copyright (c) 2019 Slack Technologies, Inc.
+// Copyright (c) 2022 Slack Technologies, Inc.
 // Use of this source code is governed by the MIT license that can be
 // found in the LICENSE file.
 
-#ifndef SHELL_BROWSER_ELECTRON_BROWSER_HANDLER_IMPL_H_
-#define SHELL_BROWSER_ELECTRON_BROWSER_HANDLER_IMPL_H_
+#ifndef SHELL_BROWSER_ELECTRON_API_IPC_HANDLER_IMPL_H_
+#define SHELL_BROWSER_ELECTRON_API_IPC_HANDLER_IMPL_H_
 
 #include <string>
 #include <vector>
@@ -19,17 +19,17 @@ class RenderFrameHost;
 }
 
 namespace electron {
-class ElectronBrowserHandlerImpl : public mojom::ElectronBrowser,
-                                   public content::WebContentsObserver {
+class ElectronApiIPCHandlerImpl : public mojom::ElectronApiIPC,
+                                  public content::WebContentsObserver {
  public:
-  explicit ElectronBrowserHandlerImpl(
+  explicit ElectronApiIPCHandlerImpl(
       content::RenderFrameHost* render_frame_host,
-      mojo::PendingReceiver<mojom::ElectronBrowser> receiver);
+      mojo::PendingReceiver<mojom::ElectronApiIPC> receiver);
 
   static void Create(content::RenderFrameHost* frame_host,
-                     mojo::PendingReceiver<mojom::ElectronBrowser> receiver);
+                     mojo::PendingReceiver<mojom::ElectronApiIPC> receiver);
 
-  // mojom::ElectronBrowser:
+  // mojom::ElectronApiIPC:
   void Message(bool internal,
                const std::string& channel,
                blink::CloneableMessage arguments) override;
@@ -37,7 +37,6 @@ class ElectronBrowserHandlerImpl : public mojom::ElectronBrowser,
               const std::string& channel,
               blink::CloneableMessage arguments,
               InvokeCallback callback) override;
-  void OnFirstNonEmptyLayout() override;
   void ReceivePostMessage(const std::string& channel,
                           blink::TransferableMessage message) override;
   void MessageSync(bool internal,
@@ -49,17 +48,13 @@ class ElectronBrowserHandlerImpl : public mojom::ElectronBrowser,
                  blink::CloneableMessage arguments) override;
   void MessageHost(const std::string& channel,
                    blink::CloneableMessage arguments) override;
-  void UpdateDraggableRegions(
-      std::vector<mojom::DraggableRegionPtr> regions) override;
-  void SetTemporaryZoomLevel(double level) override;
-  void DoGetZoomLevel(DoGetZoomLevelCallback callback) override;
 
-  base::WeakPtr<ElectronBrowserHandlerImpl> GetWeakPtr() {
+  base::WeakPtr<ElectronApiIPCHandlerImpl> GetWeakPtr() {
     return weak_factory_.GetWeakPtr();
   }
 
  private:
-  ~ElectronBrowserHandlerImpl() override;
+  ~ElectronApiIPCHandlerImpl() override;
 
   // content::WebContentsObserver:
   void WebContentsDestroyed() override;
@@ -71,11 +66,11 @@ class ElectronBrowserHandlerImpl : public mojom::ElectronBrowser,
   const int render_process_id_;
   const int render_frame_id_;
 
-  mojo::Receiver<mojom::ElectronBrowser> receiver_{this};
+  mojo::Receiver<mojom::ElectronApiIPC> receiver_{this};
 
-  base::WeakPtrFactory<ElectronBrowserHandlerImpl> weak_factory_{this};
+  base::WeakPtrFactory<ElectronApiIPCHandlerImpl> weak_factory_{this};
 
   DISALLOW_COPY_AND_ASSIGN(ElectronBrowserHandlerImpl);
 };
 }  // namespace electron
-#endif  // SHELL_BROWSER_ELECTRON_BROWSER_HANDLER_IMPL_H_
+#endif  // SHELL_BROWSER_ELECTRON_API_IPC_HANDLER_IMPL_H_
