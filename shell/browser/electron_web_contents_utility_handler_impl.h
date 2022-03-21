@@ -2,8 +2,8 @@
 // Use of this source code is governed by the MIT license that can be
 // found in the LICENSE file.
 
-#ifndef ELECTRON_SHELL_BROWSER_ELECTRON_WEB_CONTENTS_UTILITY_HANDLER_IMPL_H_
-#define ELECTRON_SHELL_BROWSER_ELECTRON_WEB_CONTENTS_UTILITY_HANDLER_IMPL_H_
+#ifndef SHELL_BROWSER_ELECTRON_WEB_CONTENTS_UTILITY_HANDLER_IMPL_H_
+#define SHELL_BROWSER_ELECTRON_WEB_CONTENTS_UTILITY_HANDLER_IMPL_H_
 
 #include <string>
 #include <vector>
@@ -62,10 +62,12 @@ class ElectronWebContentsUtilityHandlerImpl
   const int render_process_id_;
   const int render_frame_id_;
 
-  mojo::AssociatedReceiver<mojom::ElectronWebContentsUtility> receiver_{this};
+  mojo::Receiver<mojom::ElectronWebContentsUtility> receiver_{this};
 
   base::WeakPtrFactory<ElectronWebContentsUtilityHandlerImpl> weak_factory_{
       this};
+
+  DISALLOW_COPY_AND_ASSIGN(ElectronWebContentsUtilityHandlerImpl);
 };
 }  // namespace electron
-#endif  // ELECTRON_SHELL_BROWSER_ELECTRON_WEB_CONTENTS_UTILITY_HANDLER_IMPL_H_
+#endif  // SHELL_BROWSER_ELECTRON_WEB_CONTENTS_UTILITY_HANDLER_IMPL_H_

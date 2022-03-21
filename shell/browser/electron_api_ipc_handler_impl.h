@@ -70,7 +70,7 @@ class ElectronApiIPCHandlerImpl : public mojom::ElectronApiIPC,
 
   base::WeakPtrFactory<ElectronApiIPCHandlerImpl> weak_factory_{this};
 
-  DISALLOW_COPY_AND_ASSIGN(ElectronBrowserHandlerImpl);
+  DISALLOW_COPY_AND_ASSIGN(ElectronApiIPCHandlerImpl);
 };
 }  // namespace electron
 #endif  // SHELL_BROWSER_ELECTRON_API_IPC_HANDLER_IMPL_H_

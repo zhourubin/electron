@@ -1482,8 +1482,7 @@ bool ElectronBrowserClient::BindAssociatedReceiverFromFrame(
     mojo::ScopedInterfaceEndpointHandle* handle) {
   if (interface_name == mojom::ElectronAutofillDriver::Name_) {
     AutofillDriverFactory::BindAutofillDriver(
-        mojo::PendingAssociatedReceiver<mojom::ElectronAutofillDriver>(
-            std::move(*handle)),
+        mojom::ElectronAutofillDriverAssociatedRequest(std::move(*handle)),
         render_frame_host);
     return true;
   }
@@ -1563,12 +1562,6 @@ void ElectronBrowserClient::BindHostReceiverForRenderer(
 #endif
 }
 
-void BindElectronBrowser(
-    content::RenderFrameHost* frame_host,
-    mojo::PendingReceiver<electron::mojom::ElectronBrowser> receiver) {
-  ElectronBrowserHandlerImpl::Create(frame_host, std::move(receiver));
-}
-
 #if BUILDFLAG(ENABLE_ELECTRON_EXTENSIONS)
 void BindMimeHandlerService(
     content::RenderFrameHost* frame_host,
@@ -1617,8 +1610,6 @@ void ElectronBrowserClient::RegisterBrowserInterfaceBindersForFrame(
       base::BindRepeating(&BindNetworkHintsHandler));
   map->Add<blink::mojom::BadgeService>(
       base::BindRepeating(&badging::BadgeManager::BindFrameReceiver));
-  map->Add<electron::mojom::ElectronBrowser>(
-      base::BindRepeating(&BindElectronBrowser));
   map->Add<blink::mojom::KeyboardLockService>(base::BindRepeating(
       &content::KeyboardLockServiceImpl::CreateMojoService));
 #if BUILDFLAG(ENABLE_ELECTRON_EXTENSIONS)
