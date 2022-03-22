@@ -24,19 +24,11 @@ class ElectronWebContentsUtilityHandlerImpl
  public:
   explicit ElectronWebContentsUtilityHandlerImpl(
       content::RenderFrameHost* render_frame_host,
-      mojo::PendingAssociatedReceiver<mojom::ElectronWebContentsUtility>
-          receiver);
+      mojo::PendingReceiver<mojom::ElectronWebContentsUtility> receiver);
 
   static void Create(
       content::RenderFrameHost* frame_host,
-      mojo::PendingAssociatedReceiver<mojom::ElectronWebContentsUtility>
-          receiver);
-
-  // disable copy
-  ElectronWebContentsUtilityHandlerImpl(
-      const ElectronWebContentsUtilityHandlerImpl&) = delete;
-  ElectronWebContentsUtilityHandlerImpl& operator=(
-      const ElectronWebContentsUtilityHandlerImpl&) = delete;
+      mojo::PendingReceiver<mojom::ElectronWebContentsUtility> receiver);
 
   // mojom::ElectronWebContentsUtility:
   void OnFirstNonEmptyLayout() override;

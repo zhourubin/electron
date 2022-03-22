@@ -13,7 +13,7 @@
 namespace electron {
 ElectronApiIPCHandlerImpl::ElectronApiIPCHandlerImpl(
     content::RenderFrameHost* frame_host,
-    mojo::PendingAssociatedReceiver<mojom::ElectronApiIPC> receiver)
+    mojo::PendingReceiver<mojom::ElectronApiIPC> receiver)
     : render_process_id_(frame_host->GetProcess()->GetID()),
       render_frame_id_(frame_host->GetRoutingID()) {
   content::WebContents* web_contents =
@@ -102,7 +102,7 @@ content::RenderFrameHost* ElectronApiIPCHandlerImpl::GetRenderFrameHost() {
 // static
 void ElectronApiIPCHandlerImpl::Create(
     content::RenderFrameHost* frame_host,
-    mojo::PendingAssociatedReceiver<mojom::ElectronApiIPC> receiver) {
+    mojo::PendingReceiver<mojom::ElectronApiIPC> receiver) {
   new ElectronApiIPCHandlerImpl(frame_host, std::move(receiver));
 }
 }  // namespace electron

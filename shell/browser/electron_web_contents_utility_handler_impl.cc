@@ -13,7 +13,7 @@
 namespace electron {
 ElectronWebContentsUtilityHandlerImpl::ElectronWebContentsUtilityHandlerImpl(
     content::RenderFrameHost* frame_host,
-    mojo::PendingAssociatedReceiver<mojom::ElectronWebContentsUtility> receiver)
+    mojo::PendingReceiver<mojom::ElectronWebContentsUtility> receiver)
     : render_process_id_(frame_host->GetProcess()->GetID()),
       render_frame_id_(frame_host->GetRoutingID()) {
   content::WebContents* web_contents =
@@ -76,8 +76,7 @@ ElectronWebContentsUtilityHandlerImpl::GetRenderFrameHost() {
 // static
 void ElectronWebContentsUtilityHandlerImpl::Create(
     content::RenderFrameHost* frame_host,
-    mojo::PendingAssociatedReceiver<mojom::ElectronWebContentsUtility>
-        receiver) {
+    mojo::PendingReceiver<mojom::ElectronWebContentsUtility> receiver) {
   new ElectronWebContentsUtilityHandlerImpl(frame_host, std::move(receiver));
 }
 }  // namespace electron

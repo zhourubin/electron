@@ -1451,16 +1451,13 @@ bool ElectronBrowserClient::PreSpawnChild(
 }
 #endif  // defined(OS_WIN)
 
-bool BindElectronApiIPC(
-    mojo::PendingAssociatedReceiver<electron::mojom::ElectronApiIPC> receiver,
-    content::RenderFrameHost* frame_host) {
+bool ShouldBindElectronApiIPC(content::RenderFrameHost* frame_host) {
   auto* contents = content::WebContents::FromRenderFrameHost(frame_host);
   if (contents) {
     auto* prefs = WebContentsPreferences::From(contents);
     if (frame_host->GetFrameTreeNodeId() ==
             contents->GetMainFrame()->GetFrameTreeNodeId() ||
         (prefs && prefs->AllowsNodeIntegrationInSubFrames())) {
-      ElectronApiIPCHandlerImpl::Create(frame_host, std::move(receiver));
       return true;
     }
   }
@@ -1468,10 +1465,16 @@ bool BindElectronApiIPC(
   return false;
 }
 
+void BindElectronApiIPC(
+    content::RenderFrameHost* frame_host,
+    mojo::PendingReceiver<electron::mojom::ElectronApiIPC> receiver) {
+  ElectronApiIPCHandlerImpl::Create(frame_host, std::move(receiver));
+}
+
 void BindElectronWebContentsUtility(
-    mojo::PendingAssociatedReceiver<electron::mojom::ElectronWebContentsUtility>
-        receiver,
-    content::RenderFrameHost* frame_host) {
+    content::RenderFrameHost* frame_host,
+    mojo::PendingReceiver<electron::mojom::ElectronWebContentsUtility>
+        receiver) {
   ElectronWebContentsUtilityHandlerImpl::Create(frame_host,
                                                 std::move(receiver));
 }
@@ -1483,20 +1486,6 @@ bool ElectronBrowserClient::BindAssociatedReceiverFromFrame(
   if (interface_name == mojom::ElectronAutofillDriver::Name_) {
     AutofillDriverFactory::BindAutofillDriver(
         mojom::ElectronAutofillDriverAssociatedRequest(std::move(*handle)),
-        render_frame_host);
-    return true;
-  }
-  if (interface_name == electron::mojom::ElectronApiIPC::Name_) {
-    return BindElectronApiIPC(
-        mojo::PendingAssociatedReceiver<electron::mojom::ElectronApiIPC>(
-            std::move(*handle)),
-        render_frame_host);
-  }
-
-  if (interface_name == electron::mojom::ElectronWebContentsUtility::Name_) {
-    BindElectronWebContentsUtility(
-        mojo::PendingAssociatedReceiver<
-            electron::mojom::ElectronWebContentsUtility>(std::move(*handle)),
         render_frame_host);
     return true;
   }
@@ -1610,6 +1599,12 @@ void ElectronBrowserClient::RegisterBrowserInterfaceBindersForFrame(
       base::BindRepeating(&BindNetworkHintsHandler));
   map->Add<blink::mojom::BadgeService>(
       base::BindRepeating(&badging::BadgeManager::BindFrameReceiver));
+  if (ShouldBindElectronApiIPC(render_frame_host)) {
+    map->Add<electron::mojom::ElectronApiIPC>(
+        base::BindRepeating(&BindElectronApiIPC));
+  }
+  map->Add<electron::mojom::ElectronWebContentsUtility>(
+      base::BindRepeating(&BindElectronWebContentsUtility));
   map->Add<blink::mojom::KeyboardLockService>(base::BindRepeating(
       &content::KeyboardLockServiceImpl::CreateMojoService));
 #if BUILDFLAG(ENABLE_ELECTRON_EXTENSIONS)
