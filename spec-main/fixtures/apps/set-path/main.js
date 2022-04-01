@@ -7,7 +7,10 @@ if (process.argv.length > 3) {
 
 app.once('ready', () => {
   const server = http.createServer((request, response) => {
-    response.end('some text');
+    response.writeHead(200, {
+      'Content-Type': 'text/html'
+    });
+    response.end('<script>localStorage.setItem("key", "value")</script>');
   }).listen(0, '127.0.0.1', () => {
     const serverUrl = 'http://127.0.0.1:' + server.address().port;
     const mainWindow = new BrowserWindow({ show: false });

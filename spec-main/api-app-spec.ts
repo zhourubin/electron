@@ -1077,8 +1077,8 @@ describe('app module', () => {
       const appName = fs.readJsonSync(path.join(appPath, 'package.json')).name;
       const userDataPath = path.join(app.getPath('appData'), appName);
       const tempBrowserDataPath = path.join(app.getPath('temp'), appName);
-      const defaultBrowserFile = path.join(userDataPath, 'Cookies');
-      const changedBrowserFile = path.join(tempBrowserDataPath, 'Cookies');
+      const defaultBrowserFile = path.join(userDataPath, 'Local Storage');
+      const changedBrowserFile = path.join(tempBrowserDataPath, 'Local Storage');
 
       beforeEach(() => {
         fs.removeSync(userDataPath);
