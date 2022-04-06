@@ -1,0 +1,38 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Brian Ryner <bryner@google.com>
+Date: Thu, 14 Oct 2021 21:15:11 +0000
+Subject: Use a newer version of numpy on mac-arm64.
+
+Older versions of numpy do not build for arm64. Sadly, the newer
+version does not work on very old (but supported) versions of macOS,
+so keep using the old version for all other platforms.
+
+Bug: 1235841
+Change-Id: I258dcda93da986f065eb7056dd42ef8cddf797fc
+Reviewed-on: https://chromium-review.googlesource.com/c/chromium/src/+/3211860
+Reviewed-by: Dirk Pranke <dpranke@google.com>
+Commit-Queue: Brian Ryner <bryner@google.com>
+Cr-Commit-Position: refs/heads/main@{#931698}
+
+diff --git a/.vpython3 b/.vpython3
+index 7ce6dc723da1dee4e64971d7c7556560ad86928a..28b955e2b4e50bfb9e2b119d523d03a90d846028 100644
+--- a/.vpython3
++++ b/.vpython3
+@@ -59,6 +59,17 @@ wheel: <
+ wheel: <
+   name: "infra/python/wheels/numpy/${vpython_platform}"
+   version: "version:1.20.3"
++  # A newer version of numpy is required on ARM64, but it breaks older OS versions.
++  not_match_tag <
++    platform: "macosx_11_0_arm64"
++  >
++>
++wheel: <
++  name: "infra/python/wheels/numpy/mac-arm64_cp38_cp38"
++  version: "version:1.21.1"
++  match_tag <
++    platform: "macosx_11_0_arm64"
++  >
+ >
+ wheel: <
+   name: "infra/python/wheels/psutil/${vpython_platform}"
