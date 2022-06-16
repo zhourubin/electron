@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: zhoumingtao <zhoumingtao@loongson.com>
+Date: Fri, 29 Apr 2022 03:33:35 +0000
+Subject: pdfium remove unsupported compile parameters
+
+Remove compilation parameters that are not supported by lower versions of clang
+
+diff --git a/BUILD.gn b/BUILD.gn
+index 86dc11d00631947128608c7bb64068dbcc3d69a5..383f3c9a4786c0db518db45a51b29547a08ad877 100644
+--- a/BUILD.gn
++++ b/BUILD.gn
+@@ -213,8 +213,6 @@ config("pdfium_common_config") {
+     # Override -Wno-c++11-narrowing.
+     cflags += [ "-Wc++11-narrowing" ]
+ 
+-    # TODO(crbug.com/1213098): Remove once this is in //build.
+-    cflags += [ "-Wdeprecated-copy" ]
+ 
+     # May flag some issues when converting int to size_t.
+     cflags += [ "-Wtautological-unsigned-zero-compare" ]
+diff --git a/third_party/BUILD.gn b/third_party/BUILD.gn
+index 5ddfdd6733041a70abb8adce436be33f6c938301..a1ab2837fd44f88436d50c7edd36d5a06be0c5ef 100644
+--- a/third_party/BUILD.gn
++++ b/third_party/BUILD.gn
+@@ -378,10 +378,7 @@ group("libopenjpeg2") {
+ config("fx_libopenjpeg_warnings") {
+   visibility = [ ":*" ]
+   if (is_clang) {
+-    cflags = [
+-      # Various files convert MAX_INT to double and similar without casting.
+-      "-Wno-implicit-int-float-conversion",
+-    ]
++    cflags = []
+   } else if (is_win && target_cpu == "x86") {
+     cflags = [
+       # Signed/unsigned comparisons.

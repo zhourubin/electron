@@ -1,0 +1,2 @@
+pdfium_add_support_for_loongarch64.patch
+pdfium_remove_unsupported_compile_parameters.patch

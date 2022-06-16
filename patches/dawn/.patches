@@ -1,0 +1,2 @@
+dawn_add_support_for_loongarch64.patch
+dawn_remove_unsupported_compile_parameters.patch
