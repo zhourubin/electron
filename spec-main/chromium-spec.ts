@@ -1973,8 +1973,10 @@ describe('navigator.hid', () => {
     } else {
       expect(device).to.equal('');
     }
-    if (process.arch === 'arm64' || process.arch === 'arm') {
-      // arm CI returns HID devices - this block may need to change if CI hardware changes.
+    if (process.arch === 'arm64' || process.arch === 'arm' ||
+        process.arch === 'loong64') {
+      // arm  and loong64 CI returns HID devices - this block may need to change
+      // if CI hardware changes.
       expect(haveDevices).to.be.true();
       // Verify that navigation will clear device permissions
       const grantedDevices = await w.webContents.executeJavaScript('navigator.hid.getDevices()');
