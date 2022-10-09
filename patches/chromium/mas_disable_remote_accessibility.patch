@@ -114,7 +114,7 @@ index 2b99d6a9f13f12a2a470fb6a5aa98c05f26a54c7..46d735add749d76c32f80512d00373b4
    // Used to force the NSApplication's focused accessibility element to be the
    // content::BrowserAccessibilityCocoa accessibility tree when the NSView for
 diff --git a/content/browser/renderer_host/render_widget_host_view_mac.mm b/content/browser/renderer_host/render_widget_host_view_mac.mm
-index 14fec4b1b39d995553b029ca7ec780ce29b27162..54a1142f17e2a63b86e1fab52ea90276091c85a4 100644
+index 961c759eca96ffc0ffcf40cfdaf42388f47d9c2b..18c77a5520ea2ae7cfee4eea3ed01fa8a588829d 100644
 --- a/content/browser/renderer_host/render_widget_host_view_mac.mm
 +++ b/content/browser/renderer_host/render_widget_host_view_mac.mm
 @@ -252,8 +252,10 @@
@@ -167,7 +167,7 @@ index 14fec4b1b39d995553b029ca7ec780ce29b27162..54a1142f17e2a63b86e1fab52ea90276
  
  ///////////////////////////////////////////////////////////////////////////////
 diff --git a/ui/base/BUILD.gn b/ui/base/BUILD.gn
-index be753e5ea42cc8757b0e7f9a21aa12b40f1928f2..83f3ef36e17b484d838c9338ae6ad0073b42283c 100644
+index 028a97becd88fb12481b1de0395c7c81857d3af3..4491be85cb82f050cc70c24e933e841a08b9123f 100644
 --- a/ui/base/BUILD.gn
 +++ b/ui/base/BUILD.gn
 @@ -319,6 +319,13 @@ component("base") {
@@ -205,7 +205,7 @@ index e7adfee3210ec723c687adfcc4bee8827ef643e7..25a924a47eeb30d783ef83dbb4896c4b
 +
  #endif  // UI_BASE_COCOA_REMOTE_ACCESSIBILITY_API_H_
 diff --git a/ui/views/cocoa/native_widget_mac_ns_window_host.h b/ui/views/cocoa/native_widget_mac_ns_window_host.h
-index d4051a7a8755c7b10d4df3746cb2857471f07c45..de04616893d1c97e3607eb5a4b942733ae597b05 100644
+index c93aedbce83c398a55c478df60d5ba6dd5324a0b..dfa1983e5605d14e44efae3c1418b4e53c392333 100644
 --- a/ui/views/cocoa/native_widget_mac_ns_window_host.h
 +++ b/ui/views/cocoa/native_widget_mac_ns_window_host.h
 @@ -31,7 +31,9 @@
@@ -218,7 +218,7 @@ index d4051a7a8755c7b10d4df3746cb2857471f07c45..de04616893d1c97e3607eb5a4b942733
  @class NSView;
  
  namespace remote_cocoa {
-@@ -449,11 +451,13 @@ class VIEWS_EXPORT NativeWidgetMacNSWindowHost
+@@ -452,11 +454,13 @@ class VIEWS_EXPORT NativeWidgetMacNSWindowHost
    mojo::AssociatedRemote<remote_cocoa::mojom::NativeWidgetNSWindow>
        remote_ns_window_remote_;
  
@@ -233,7 +233,7 @@ index d4051a7a8755c7b10d4df3746cb2857471f07c45..de04616893d1c97e3607eb5a4b942733
    // Used to force the NSApplication's focused accessibility element to be the
    // views::Views accessibility tree when the NSView for this is focused.
 diff --git a/ui/views/cocoa/native_widget_mac_ns_window_host.mm b/ui/views/cocoa/native_widget_mac_ns_window_host.mm
-index 7ed5041b0625a98be269b4f4daeef33c3bc1f8b6..803d8bc43fa57c8e49d33d4be618d51a408ffe47 100644
+index 1c4c4a774e4d5e199ae50e8df4499a497d3b0674..b2265079021d10e2944b9474fafe32ccca95d3de 100644
 --- a/ui/views/cocoa/native_widget_mac_ns_window_host.mm
 +++ b/ui/views/cocoa/native_widget_mac_ns_window_host.mm
 @@ -296,14 +296,22 @@ void HandleAccelerator(const ui::Accelerator& accelerator,

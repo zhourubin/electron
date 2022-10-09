@@ -1679,11 +1679,39 @@ describe('navigator.serial', () => {
   });
 
   it('returns a port when select-serial-port event is defined', async () => {
+    let havePorts = false;
     w.webContents.session.on('select-serial-port', (event, portList, webContents, callback) => {
-      callback(portList[0].portId);
+      if (portList.length > 0) {
+        havePorts = true;
+        callback(portList[0].portId);
+      } else {
+        callback('');
+      }
     });
     const port = await getPorts();
-    expect(port).to.equal('[object SerialPort]');
+    if (havePorts) {
+      expect(port).to.equal('[object SerialPort]');
+    } else {
+      expect(port).to.equal('NotFoundError: No port selected by the user.');
+    }
+  });
+
+  it('navigator.serial.getPorts() returns values', async () => {
+    let havePorts = false;
+
+    w.webContents.session.on('select-serial-port', (event, portList, webContents, callback) => {
+      if (portList.length > 0) {
+        havePorts = true;
+        callback(portList[0].portId);
+      } else {
+        callback('');
+      }
+    });
+    await getPorts();
+    if (havePorts) {
+      const grantedPorts = await w.webContents.executeJavaScript('navigator.serial.getPorts()');
+      expect(grantedPorts).to.not.be.empty();
+    }
   });
 });
 
@@ -1945,8 +1973,10 @@ describe('navigator.hid', () => {
     } else {
       expect(device).to.equal('');
     }
-    if (process.arch === 'arm64' || process.arch === 'arm') {
-      // arm CI returns HID devices - this block may need to change if CI hardware changes.
+    if (process.arch === 'arm64' || process.arch === 'arm' ||
+        process.arch === 'loong64') {
+      // arm  and loong64 CI returns HID devices - this block may need to change
+      // if CI hardware changes.
       expect(haveDevices).to.be.true();
       // Verify that navigation will clear device permissions
       const grantedDevices = await w.webContents.executeJavaScript('navigator.hid.getDevices()');
@@ -1994,6 +2024,45 @@ describe('navigator.hid', () => {
       expect(gotDevicePerms).to.be.true();
     } else {
       expect(device).to.equal('');
+    }
+  });
+
+  it('returns excludes a device when a exclusionFilter is specified', async () => {
+    const exclusionFilters = <any>[];
+    let haveDevices = false;
+    let checkForExcludedDevice = false;
+
+    w.webContents.session.on('select-hid-device', (event, details, callback) => {
+      if (details.deviceList.length > 0) {
+        details.deviceList.find((device) => {
+          if (device.name && device.name !== '' && device.serialNumber && device.serialNumber !== '') {
+            if (checkForExcludedDevice) {
+              const compareDevice = {
+                vendorId: device.vendorId,
+                productId: device.productId
+              };
+              expect(compareDevice).to.not.equal(exclusionFilters[0], 'excluded device should not be returned');
+            } else {
+              haveDevices = true;
+              exclusionFilters.push({
+                vendorId: device.vendorId,
+                productId: device.productId
+              });
+              return true;
+            }
+          }
+        });
+      }
+      callback();
+    });
+
+    await getDevices();
+    if (haveDevices) {
+      // We have devices to exclude, so check if exculsionFilters work
+      checkForExcludedDevice = true;
+      await w.webContents.executeJavaScript(`
+        navigator.hid.requestDevice({filters: [], exclusionFilters: ${JSON.stringify(exclusionFilters)}}).then(device => device.toString()).catch(err => err.toString());
+      `, true);
     }
   });
 });

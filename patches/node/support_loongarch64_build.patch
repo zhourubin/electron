@@ -1,0 +1,28 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Mingtao Zhou <zhoumingtao@loongson.cn>
+Date: Fri, 10 Jun 2022 01:59:57 +0000
+Subject: support loongarch64 build
+
+form https://github.com/nodejs/node/commit/81e88f27b7199bafc9e26bb1def2d06bac2b9fad
+
+diff --git a/configure.py b/configure.py
+index 47137d8912dd1439962127a3c1f417eb78572021..adbb1af4c5ab62ab89d9036102089687a0a7bf2e 100755
+--- a/configure.py
++++ b/configure.py
+@@ -47,7 +47,7 @@ parser = argparse.ArgumentParser()
+ valid_os = ('win', 'mac', 'solaris', 'freebsd', 'openbsd', 'linux',
+             'android', 'aix', 'cloudabi')
+ valid_arch = ('arm', 'arm64', 'ia32', 'mips', 'mipsel', 'mips64el', 'ppc',
+-              'ppc64', 'x32','x64', 'x86', 'x86_64', 's390x', 'riscv64')
++              'ppc64', 'x32','x64', 'x86', 'x86_64', 's390x', 'riscv64', 'loong64')
+ valid_arm_float_abi = ('soft', 'softfp', 'hard')
+ valid_arm_fpu = ('vfp', 'vfpv3', 'vfpv3-d16', 'neon')
+ valid_mips_arch = ('loongson', 'r1', 'r2', 'r6', 'rx')
+@@ -1079,6 +1079,7 @@ def host_arch_cc():
+     '__x86_64__'  : 'x64',
+     '__s390x__'   : 's390x',
+     '__riscv'     : 'riscv',
++    '__loongarch64': 'loong64',
+   }
+ 
+   rtn = 'ia32' # default

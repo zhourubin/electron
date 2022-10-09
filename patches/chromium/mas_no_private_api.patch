@@ -6,6 +6,33 @@ Subject: mas: avoid some private APIs
 Guard usages in blink of private Mac APIs by MAS_BUILD, so they can be
 excluded for people who want to submit their apps to the Mac App store.
 
+diff --git a/base/process/process_info_mac.cc b/base/process/process_info_mac.cc
+index 368405f29313d51a6eee16517b634c6d0ea95281..2553a7fbf1e8b4dea796dec3b3e906d265d3ad76 100644
+--- a/base/process/process_info_mac.cc
++++ b/base/process/process_info_mac.cc
+@@ -5,18 +5,22 @@
+ #include <stdlib.h>
+ #include <unistd.h>
+ 
++#ifndef MAS_BUILD
+ extern "C" {
+ pid_t responsibility_get_pid_responsible_for_pid(pid_t)
+     API_AVAILABLE(macosx(10.12));
+ }
++#endif
+ 
+ namespace base {
+ 
+ bool IsProcessSelfResponsible() {
++#ifndef MAS_BUILD
+   if (__builtin_available(macOS 10.14, *)) {
+     const pid_t pid = getpid();
+     return responsibility_get_pid_responsible_for_pid(pid) == pid;
+   }
++#endif
+   return true;
+ }
+ 
 diff --git a/content/common/pseudonymization_salt.cc b/content/common/pseudonymization_salt.cc
 index 28e003bef910abff022def659fe18d4cd0549f8a..530bcbdb5d350f6486dc1e8536f7b279be69e241 100644
 --- a/content/common/pseudonymization_salt.cc
@@ -95,7 +122,7 @@ index c15f3a631292b538698625328fb429ee3c9964f5..37e038753ecf1b82ec92c06b2c0729b5
  }
  
 diff --git a/device/bluetooth/bluetooth_adapter_mac.mm b/device/bluetooth/bluetooth_adapter_mac.mm
-index 3f7dce0281f7b5a540d7b9377ef14a8a6aa9a2fa..11d8419791f3e45d5242081422d452d4fc703833 100644
+index d342eb4e9fc94de4365d86c2d1af4b85a8bf63a3..012f9ce97d9ed6b00deb718a88f432e053cb3bd1 100644
 --- a/device/bluetooth/bluetooth_adapter_mac.mm
 +++ b/device/bluetooth/bluetooth_adapter_mac.mm
 @@ -42,6 +42,7 @@
@@ -156,10 +183,10 @@ index ebe37172d254e8441fe2b8c290bd5a59af38d754..6a131f5c41f3e43a1467efeec2ce63f6
        "AudioToolbox.framework",
        "AudioUnit.framework",
 diff --git a/media/audio/mac/audio_manager_mac.cc b/media/audio/mac/audio_manager_mac.cc
-index ebdc6364312ee710d416318836c03aeec9bfb65c..aa9b50de7efaf0e1b64effea93204984c91790b5 100644
+index b8805f9174818ac086a5d6542c9962050f00aee8..5491b62a2e180b2f6e48e243e2ac78c3b1a16892 100644
 --- a/media/audio/mac/audio_manager_mac.cc
 +++ b/media/audio/mac/audio_manager_mac.cc
-@@ -886,7 +886,7 @@ AudioParameters AudioManagerMac::GetPreferredOutputStreamParameters(
+@@ -887,7 +887,7 @@ AudioParameters AudioManagerMac::GetPreferredOutputStreamParameters(
  
  void AudioManagerMac::InitializeOnAudioThread() {
    DCHECK(GetTaskRunner()->BelongsToCurrentThread());

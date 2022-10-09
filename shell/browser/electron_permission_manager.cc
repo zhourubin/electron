@@ -253,6 +253,7 @@ blink::mojom::PermissionStatus ElectronPermissionManager::GetPermissionStatus(
 ElectronPermissionManager::SubscriptionId
 ElectronPermissionManager::SubscribePermissionStatusChange(
     content::PermissionType permission,
+    content::RenderProcessHost* render_process_host,
     content::RenderFrameHost* render_frame_host,
     const GURL& requesting_origin,
     base::RepeatingCallback<void(blink::mojom::PermissionStatus)> callback) {
@@ -334,22 +335,32 @@ bool ElectronPermissionManager::CheckDevicePermission(
                    static_cast<content::PermissionType>(
                        WebContentsPermissionHelper::PermissionType::SERIAL)) {
 #if BUILDFLAG(IS_WIN)
-          if (device->FindStringKey(kDeviceInstanceIdKey) ==
-              granted_device.FindStringKey(kDeviceInstanceIdKey))
+          const auto* instance_id = device->FindStringKey(kDeviceInstanceIdKey);
+          const auto* port_instance_id =
+              granted_device.FindStringKey(kDeviceInstanceIdKey);
+          if (instance_id && port_instance_id &&
+              *instance_id == *port_instance_id)
             return true;
 #else
+          const auto* serial_number =
+              granted_device.FindStringKey(kSerialNumberKey);
+          const auto* port_serial_number =
+              device->FindStringKey(kSerialNumberKey);
           if (device->FindIntKey(kVendorIdKey) !=
                   granted_device.FindIntKey(kVendorIdKey) ||
               device->FindIntKey(kProductIdKey) !=
                   granted_device.FindIntKey(kProductIdKey) ||
-              *device->FindStringKey(kSerialNumberKey) !=
-                  *granted_device.FindStringKey(kSerialNumberKey)) {
+              (serial_number && port_serial_number &&
+               *port_serial_number != *serial_number)) {
             continue;
           }
 
 #if BUILDFLAG(IS_MAC)
-          if (*device->FindStringKey(kUsbDriverKey) !=
-              *granted_device.FindStringKey(kUsbDriverKey)) {
+          const auto* usb_driver_key = device->FindStringKey(kUsbDriverKey);
+          const auto* port_usb_driver_key =
+              granted_device.FindStringKey(kUsbDriverKey);
+          if (usb_driver_key && port_usb_driver_key &&
+              *usb_driver_key != *port_usb_driver_key) {
             continue;
           }
 #endif  // BUILDFLAG(IS_MAC)
@@ -406,6 +417,14 @@ ElectronPermissionManager::GetPermissionStatusForCurrentDocument(
   return GetPermissionStatus(
       permission, render_frame_host->GetLastCommittedOrigin().GetURL(),
       content::PermissionUtil::GetLastCommittedOriginAsURL(render_frame_host));
+}
+
+blink::mojom::PermissionStatus
+ElectronPermissionManager::GetPermissionStatusForWorker(
+    content::PermissionType permission,
+    content::RenderProcessHost* render_process_host,
+    const GURL& worker_origin) {
+  return GetPermissionStatus(permission, worker_origin, worker_origin);
 }
 
 }  // namespace electron

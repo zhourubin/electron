@@ -504,6 +504,7 @@ WebContents.prototype._callWindowOpenHandler = function (event: Electron.Event, 
   if (!this._windowOpenHandler) {
     return defaultResponse;
   }
+
   const response = this._windowOpenHandler(details);
 
   if (typeof response !== 'object') {
@@ -627,6 +628,7 @@ WebContents.prototype._init = function () {
   });
 
   this.on('-ipc-ports' as any, function (event: Electron.IpcMainEvent, internal: boolean, channel: string, message: any, ports: any[]) {
+    addSenderFrameToEvent(event);
     event.ports = ports.map(p => new MessagePortMain(p));
     ipcMain.emit(channel, event, message);
   });
@@ -665,7 +667,15 @@ WebContents.prototype._init = function () {
         postBody,
         disposition
       };
-      const result = this._callWindowOpenHandler(event, details);
+
+      let result;
+      try {
+        result = this._callWindowOpenHandler(event, details);
+      } catch (err) {
+        event.preventDefault();
+        throw err;
+      }
+
       const options = result.browserWindowConstructorOptions;
       if (!event.defaultPrevented) {
         openGuestWindow({
@@ -696,7 +706,15 @@ WebContents.prototype._init = function () {
         referrer,
         postBody
       };
-      const result = this._callWindowOpenHandler(event, details);
+
+      let result;
+      try {
+        result = this._callWindowOpenHandler(event, details);
+      } catch (err) {
+        event.preventDefault();
+        throw err;
+      }
+
       windowOpenOutlivesOpenerOption = result.outlivesOpener;
       windowOpenOverriddenOptions = result.browserWindowConstructorOptions;
       if (!event.defaultPrevented) {

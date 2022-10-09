@@ -7,7 +7,7 @@ const { emittedOnce, waitForEvent } = require('./events-helpers');
 const { ifdescribe, ifit, delay } = require('./spec-helpers');
 
 const features = process._linkedBinding('electron_common_features');
-const nativeModulesEnabled = process.env.ELECTRON_SKIP_NATIVE_MODULE_TESTS;
+const nativeModulesEnabled = !process.env.ELECTRON_SKIP_NATIVE_MODULE_TESTS;
 
 /* Most of the APIs here don't use standard callbacks */
 /* eslint-disable standard/no-callback-literal */
@@ -551,6 +551,18 @@ describe('<webview> tag', function () {
       expect(frameId).to.be.an('array').that.has.lengthOf(2);
       expect(channel).to.equal('channel');
       expect(args).to.deep.equal(['arg1', 'arg2']);
+    });
+  });
+
+  describe('page-title-updated event', () => {
+    it('emits when title is set', async () => {
+      loadWebView(webview, {
+        src: `file://${fixtures}/pages/a.html`
+      });
+      const { title, explicitSet } = await waitForEvent(webview, 'page-title-updated');
+
+      expect(title).to.equal('test');
+      expect(explicitSet).to.be.true();
     });
   });
 

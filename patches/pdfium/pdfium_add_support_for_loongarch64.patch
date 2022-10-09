@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: zhoumingtao <zhoumingtao@loongson.com>
+Date: Tue, 22 Feb 2022 08:20:02 +0000
+Subject: pdfium add support for loongarch64
+
+added loongarch64 build configuration
+
+diff --git a/third_party/base/allocator/partition_allocator/page_allocator_constants.h b/third_party/base/allocator/partition_allocator/page_allocator_constants.h
+index f13e518255c27135543265c5cd3dd11d22184ed3..af10b1117f68a6507bed95f16917c08cd1be677e 100644
+--- a/third_party/base/allocator/partition_allocator/page_allocator_constants.h
++++ b/third_party/base/allocator/partition_allocator/page_allocator_constants.h
+@@ -48,7 +48,7 @@ constexpr ALWAYS_INLINE int PageAllocationGranularityShift() {
+   // compiled for 64kB are likely to work on 4kB systems, 64kB is a good choice
+   // here.
+   return 16;  // 64kB
+-#elif defined(_MIPS_ARCH_LOONGSON)
++#elif defined(_MIPS_ARCH_LOONGSON) || defined(ARCH_CPU_LOONG64)
+   return 14;  // 16kB
+ #else
+   return 12;  // 4kB
+diff --git a/third_party/base/allocator/partition_allocator/partition_alloc_constants.h b/third_party/base/allocator/partition_allocator/partition_alloc_constants.h
+index d0280ce20f99d5758577ae8f1b19f664f3c4231f..b37237f965d39881d162fe8ef0468433017af5f0 100644
+--- a/third_party/base/allocator/partition_allocator/partition_alloc_constants.h
++++ b/third_party/base/allocator/partition_allocator/partition_alloc_constants.h
+@@ -39,7 +39,7 @@ static const size_t kBucketShift = (kAllocationGranularity == 8) ? 3 : 2;
+ // other constant values, we pack _all_ `PartitionRootGeneric::Alloc` sizes
+ // perfectly up against the end of a system page.
+ 
+-#if defined(_MIPS_ARCH_LOONGSON)
++#if defined(_MIPS_ARCH_LOONGSON) || defined(ARCH_CPU_LOONG64)
+ PAGE_ALLOCATOR_CONSTANTS_DECLARE_CONSTEXPR ALWAYS_INLINE int
+ PartitionPageShift() {
+   return 16;  // 64 KiB

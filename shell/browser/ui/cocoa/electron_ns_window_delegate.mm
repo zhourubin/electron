@@ -203,6 +203,7 @@ using FullScreenTransitionState =
   // windowDidDeminiaturize
   level_ = [window level];
   shell_->SetWindowLevel(NSNormalWindowLevel);
+  shell_->UpdateWindowOriginalFrame();
 }
 
 - (void)windowDidMiniaturize:(NSNotification*)notification {
@@ -248,6 +249,9 @@ using FullScreenTransitionState =
 
   shell_->NotifyWindowEnterFullScreen();
 
+  if (shell_->HandleDeferredClose())
+    return;
+
   shell_->HandlePendingFullscreenTransitions();
 }
 
@@ -262,6 +266,9 @@ using FullScreenTransitionState =
 
   shell_->SetResizable(is_resizable_);
   shell_->NotifyWindowLeaveFullScreen();
+
+  if (shell_->HandleDeferredClose())
+    return;
 
   shell_->HandlePendingFullscreenTransitions();
 }

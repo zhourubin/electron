@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: zhoumingtao <zhoumingtao@loongson.com>
+Date: Fri, 29 Apr 2022 03:27:35 +0000
+Subject: dawn Remove unsupported compile parameters
+
+Remove compilation parameters that are not supported by lower versions of clang
+
+diff --git a/src/dawn/common/BUILD.gn b/src/dawn/common/BUILD.gn
+index d0b008672a6ef38dd6fe43f21e484dc931f774fc..ce821edd4bb113d61822f02e5ae177494a667487 100644
+--- a/src/dawn/common/BUILD.gn
++++ b/src/dawn/common/BUILD.gn
+@@ -104,15 +104,12 @@ config("internal_config") {
+       "-Wconditional-uninitialized",
+       "-Wcstring-format-directive",
+       "-Wc++11-narrowing",
+-      "-Wdeprecated-copy",
+-      "-Wdeprecated-copy-dtor",
+       "-Wduplicate-enum",
+       "-Wextra-semi-stmt",
+       "-Wimplicit-fallthrough",
+       "-Winconsistent-missing-destructor-override",
+       "-Winvalid-offsetof",
+       "-Wmissing-field-initializers",
+-      "-Wnon-c-typedef-for-linkage",
+       "-Wpessimizing-move",
+       "-Wrange-loop-analysis",
+       "-Wredundant-move",
